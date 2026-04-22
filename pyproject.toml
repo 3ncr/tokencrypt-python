@@ -1,0 +1,54 @@
+[build-system]
+requires = ["hatchling>=1.18"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tokencrypt"
+version = "1.0.0"
+description = "Python implementation of the 3ncr.org v1 string encryption standard (AES-256-GCM)."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+keywords = ["3ncr", "encryption", "aes-gcm", "argon2id", "tokens", "configuration"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Security :: Cryptography",
+]
+authors = [{ name = "3ncr.org" }]
+dependencies = [
+    "cryptography>=41",
+    "argon2-cffi>=21",
+]
+
+[project.urls]
+Homepage = "https://3ncr.org/"
+Repository = "https://github.com/3ncr/tokencrypt-python"
+Specification = "https://3ncr.org/1/"
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tokencrypt"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/tokencrypt",
+    "tests",
+    "README.md",
+    "LICENSE",
+    "pyproject.toml",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
