@@ -3,15 +3,19 @@
 from __future__ import annotations
 
 import os
-import warnings
 
 import pytest
 
 from tokencrypt import HEADER_V1, TokenCrypt, TokenCryptError
 
-# Canonical v1 test vectors — shared across Go, Node, PHP, and Python
-# implementations. Derived via PBKDF2-SHA3-256 with secret="a", salt="b",
-# iterations=1000.
+# Canonical v1 envelope test vectors — shared with Go, Node, PHP, and other
+# implementations. The 32-byte AES key was originally derived via the legacy
+# PBKDF2-SHA3-256 KDF with secret="a", salt="b", iterations=1000; this Python
+# library only supports the modern KDFs, so the derived key is hardcoded here
+# so we can still verify envelope-level interop.
+CANONICAL_KEY = bytes.fromhex(
+    "2f84151869d7d2255d62b3320e97429bde5aac04a0573b2468529a7417515f87"
+)
 CANONICAL_VECTORS = [
     ("a", "3ncr.org/1#I09Dwt6q05ZrH8GQ0cp+g9Jm0hD0BmCwEdylCh8"),
     ("test", "3ncr.org/1#Y3/v2PY7kYQgveAn4AJ8zP+oOuysbs5btYLZ9vl8DLc"),
@@ -26,21 +30,15 @@ CANONICAL_VECTORS = [
 ]
 
 
-def _legacy() -> TokenCrypt:
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore", DeprecationWarning)
-        return TokenCrypt.from_pbkdf2_sha3("a", "b", 1000)
-
-
 class TestCanonicalVectors:
     @pytest.mark.parametrize("plaintext,encrypted", CANONICAL_VECTORS)
     def test_decrypts_canonical_vector(self, plaintext: str, encrypted: str) -> None:
-        tc = _legacy()
+        tc = TokenCrypt.from_raw_key(CANONICAL_KEY)
         assert tc.decrypt_if_3ncr(encrypted) == plaintext
 
     @pytest.mark.parametrize("plaintext,encrypted", CANONICAL_VECTORS)
     def test_round_trip(self, plaintext: str, encrypted: str) -> None:
-        tc = _legacy()
+        tc = TokenCrypt.from_raw_key(CANONICAL_KEY)
         enc = tc.encrypt_3ncr(plaintext)
         assert enc.startswith(HEADER_V1)
         assert tc.decrypt_if_3ncr(enc) == plaintext
@@ -103,7 +101,7 @@ class TestTamperDetection:
 class TestBase64PaddingRobustness:
     def test_decoder_accepts_padded_input(self) -> None:
         # The spec emits no padding, but decoders should accept both.
-        tc = _legacy()
+        tc = TokenCrypt.from_raw_key(CANONICAL_KEY)
         body = CANONICAL_VECTORS[0][1][len(HEADER_V1):]
         padded_body = body + "=" * ((-len(body)) % 4)
         assert tc.decrypt_if_3ncr(HEADER_V1 + padded_body) == CANONICAL_VECTORS[0][0]
@@ -144,7 +142,3 @@ class TestKDFs:
         other = TokenCrypt.from_argon2id("wrong secret", salt)
         with pytest.raises(TokenCryptError):
             other.decrypt_if_3ncr(enc)
-
-    def test_pbkdf2_sha3_emits_deprecation_warning(self) -> None:
-        with pytest.warns(DeprecationWarning):
-            TokenCrypt.from_pbkdf2_sha3("a", "b", 1000)

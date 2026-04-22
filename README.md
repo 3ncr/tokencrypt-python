@@ -57,15 +57,10 @@ token), hash it through SHA3-256:
 tc = TokenCrypt.from_sha3("some-high-entropy-api-token")
 ```
 
-### Legacy: PBKDF2-SHA3
-
-The original `(secret, salt, iterations)` KDF is kept for backward compatibility
-with data encrypted by earlier 3ncr.org libraries. It is **deprecated** — prefer
-`from_argon2id`, `from_raw_key`, or `from_sha3` for new code.
-
-```python
-tc = TokenCrypt.from_pbkdf2_sha3("my-secret", "my-salt", 1000)
-```
+This library does not implement the legacy PBKDF2-SHA3 KDF that earlier 3ncr.org
+libraries used for backward compatibility. If you need to decrypt data produced
+by that KDF, derive the 32-byte key with `hashlib.pbkdf2_hmac("sha3_256", ...)`
+yourself and pass it to `from_raw_key`.
 
 ### Encrypt / decrypt
 
@@ -86,11 +81,14 @@ Decryption failures (bad tag, truncated input, malformed base64) raise
 
 ## Cross-implementation interop
 
-This implementation decrypts the canonical v1 test vectors shared with the
-[Go](https://github.com/3ncr/tokencrypt),
+This implementation decrypts the canonical v1 envelope test vectors shared with
+the [Go](https://github.com/3ncr/tokencrypt),
 [Node.js](https://github.com/3ncr/nodencrypt), and
-[PHP](https://github.com/3ncr/tokencrypt-php) reference libraries
-(`secret = "a"`, `salt = "b"`, `iterations = 1000`). See `tests/test_tokencrypt.py`.
+[PHP](https://github.com/3ncr/tokencrypt-php) reference libraries. The 32-byte
+AES key behind those vectors was originally derived via PBKDF2-SHA3-256 with
+`secret = "a"`, `salt = "b"`, `iterations = 1000`; the tests hardcode the
+resulting key and verify the AES-256-GCM envelope round-trips exactly. See
+`tests/test_tokencrypt.py`.
 
 ## License
 

@@ -9,7 +9,6 @@ from __future__ import annotations
 import base64
 import hashlib
 import os
-import warnings
 from typing import Union
 
 from cryptography.exceptions import InvalidTag
@@ -103,34 +102,6 @@ class TokenCrypt:
             parallelism=_ARGON2ID_PARALLELISM,
             hash_len=_AES_KEY_SIZE,
             type=Type.ID,
-        )
-        return cls(key)
-
-    @classmethod
-    def from_pbkdf2_sha3(
-        cls, secret: _BytesLike, salt: _BytesLike, iterations: int = 1000
-    ) -> "TokenCrypt":
-        """Derive the AES key via PBKDF2-SHA3-256 (legacy KDF).
-
-        .. deprecated::
-            PBKDF2-SHA3 is retained for backward compatibility with data
-            encrypted by earlier versions of 3ncr.org libraries. New callers
-            should use :meth:`from_argon2id` (low-entropy secrets) or
-            :meth:`from_sha3` / :meth:`from_raw_key` (high-entropy secrets).
-            See https://3ncr.org/1/#kdf.
-        """
-        warnings.warn(
-            "from_pbkdf2_sha3 is the legacy 3ncr.org v1 KDF; use from_argon2id "
-            "for passwords or from_raw_key/from_sha3 for high-entropy secrets.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        key = hashlib.pbkdf2_hmac(
-            "sha3_256",
-            _as_bytes(secret),
-            _as_bytes(salt),
-            iterations,
-            _AES_KEY_SIZE,
         )
         return cls(key)
 
