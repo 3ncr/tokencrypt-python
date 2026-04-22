@@ -1,11 +1,13 @@
 # tokencrypt (3ncr.org)
 
-Python implementation of the [3ncr.org](https://3ncr.org/) v1 string encryption
-standard.
+[![Test](https://github.com/3ncr/tokencrypt-python/actions/workflows/test.yml/badge.svg)](https://github.com/3ncr/tokencrypt-python/actions/workflows/test.yml)
+[![PyPI version](https://img.shields.io/pypi/v/tokencrypt.svg)](https://pypi.org/project/tokencrypt/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-3ncr.org is a small, interoperable format for encrypted strings, originally
-intended for encrypting tokens in configuration files but usable for any UTF-8
-string. v1 uses AES-256-GCM with a 12-byte random IV:
+[3ncr.org](https://3ncr.org/) is a standard for string encryption / decryption
+(algorithms + storage format), originally intended for encrypting tokens in
+configuration files but usable for any UTF-8 string. v1 uses AES-256-GCM for
+authenticated encryption with a 12-byte random IV:
 
 ```
 3ncr.org/1#<base64(iv[12] || ciphertext || tag[16])>
@@ -13,6 +15,8 @@ string. v1 uses AES-256-GCM with a 12-byte random IV:
 
 Encrypted values look like
 `3ncr.org/1#pHRufQld0SajqjHx+FmLMcORfNQi1d674ziOPpG52hqW5+0zfJD91hjXsBsvULVtB017mEghGy3Ohj+GgQY5MQ`.
+
+This is the official Python implementation.
 
 ## Install
 
@@ -24,19 +28,9 @@ Requires Python 3.9+.
 
 ## Usage
 
-Pick a constructor based on the entropy of your secret.
-
-### Recommended: Argon2id (low-entropy secrets)
-
-For passwords or passphrases, use `TokenCrypt.from_argon2id`. It uses the
-parameters recommended by the [3ncr.org v1 spec](https://3ncr.org/1/#kdf)
-(m=19456 KiB, t=2, p=1). Salt must be at least 16 bytes.
-
-```python
-from tokencrypt import TokenCrypt
-
-tc = TokenCrypt.from_argon2id("correct horse battery staple", b"0123456789abcdef")
-```
+Pick a constructor based on the entropy of your secret — see the
+[3ncr.org v1 KDF guidance](https://3ncr.org/1/#kdf) for the canonical
+recommendation.
 
 ### Recommended: raw 32-byte key (high-entropy secrets)
 
@@ -57,10 +51,24 @@ token), hash it through SHA3-256:
 tc = TokenCrypt.from_sha3("some-high-entropy-api-token")
 ```
 
+### Recommended: Argon2id (passwords / low-entropy secrets)
+
+For passwords or passphrases, use `TokenCrypt.from_argon2id`. It uses the
+parameters recommended by the [3ncr.org v1 spec](https://3ncr.org/1/#kdf)
+(`m=19456 KiB, t=2, p=1`). The salt must be at least 16 bytes.
+
+```python
+from tokencrypt import TokenCrypt
+
+tc = TokenCrypt.from_argon2id("correct horse battery staple", b"0123456789abcdef")
+```
+
+### Legacy: PBKDF2-SHA3 (existing data only)
+
 This library does not implement the legacy PBKDF2-SHA3 KDF that earlier 3ncr.org
-libraries used for backward compatibility. If you need to decrypt data produced
-by that KDF, derive the 32-byte key with `hashlib.pbkdf2_hmac("sha3_256", ...)`
-yourself and pass it to `from_raw_key`.
+libraries (Go, Node.js, PHP, Java) shipped for backward compatibility. If you
+need to decrypt data produced by that KDF, derive the 32-byte key with
+`hashlib.pbkdf2_hmac("sha3_256", ...)` yourself and pass it to `from_raw_key`.
 
 ### Encrypt / decrypt
 
@@ -92,4 +100,4 @@ resulting key and verify the AES-256-GCM envelope round-trips exactly. See
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE).
