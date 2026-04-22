@@ -46,6 +46,8 @@ include = [
     "src/tokencrypt",
     "tests",
     "README.md",
+    "CHANGELOG.md",
+    "SECURITY.md",
     "LICENSE",
     "pyproject.toml",
 ]
