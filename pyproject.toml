@@ -27,7 +27,7 @@ classifiers = [
 authors = [{ name = "3ncr.org" }]
 dependencies = [
     "cryptography>=41",
-    "argon2-cffi>=21",
+    "argon2-cffi>=25.1.0",
 ]
 
 [project.urls]
