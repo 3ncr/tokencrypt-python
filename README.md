@@ -2,6 +2,7 @@
 
 [![Test](https://github.com/3ncr/tokencrypt-python/actions/workflows/test.yml/badge.svg)](https://github.com/3ncr/tokencrypt-python/actions/workflows/test.yml)
 [![PyPI version](https://img.shields.io/pypi/v/tokencrypt.svg)](https://pypi.org/project/tokencrypt/)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/3ncr/tokencrypt-python/badge)](https://scorecard.dev/viewer/?uri=github.com/3ncr/tokencrypt-python)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 [3ncr.org](https://3ncr.org/) is a standard for string encryption / decryption
