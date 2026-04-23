@@ -36,7 +36,7 @@ Repository = "https://github.com/3ncr/tokencrypt-python"
 Specification = "https://3ncr.org/1/"
 
 [project.optional-dependencies]
-dev = ["pytest>=7"]
+dev = ["pytest>=8.4.2"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/tokencrypt"]
