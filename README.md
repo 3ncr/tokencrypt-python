@@ -1,7 +1,7 @@
-# tokencrypt (3ncr.org)
+# 3ncr (Python)
 
 [![Test](https://github.com/3ncr/tokencrypt-python/actions/workflows/test.yml/badge.svg)](https://github.com/3ncr/tokencrypt-python/actions/workflows/test.yml)
-[![PyPI version](https://img.shields.io/pypi/v/tokencrypt.svg)](https://pypi.org/project/tokencrypt/)
+[![PyPI version](https://img.shields.io/pypi/v/3ncr.svg)](https://pypi.org/project/3ncr/)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/3ncr/tokencrypt-python/badge)](https://scorecard.dev/viewer/?uri=github.com/3ncr/tokencrypt-python)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
@@ -24,7 +24,7 @@ languages (Go, Node.js, PHP, Rust, Java, C#, Ruby).
 ## Install
 
 ```bash
-pip install tokencrypt
+pip install 3ncr
 ```
 
 Requires Python 3.9+.
@@ -41,7 +41,7 @@ If you already have a 32-byte AES-256 key, skip the KDF and pass it directly.
 
 ```python
 import os
-from tokencrypt import TokenCrypt
+from threencr import TokenCrypt
 
 key = os.urandom(32)  # or load from an env variable / secret store
 tc = TokenCrypt.from_raw_key(key)
@@ -61,7 +61,7 @@ parameters recommended by the [3ncr.org v1 spec](https://3ncr.org/1/#kdf)
 (`m=19456 KiB, t=2, p=1`). The salt must be at least 16 bytes.
 
 ```python
-from tokencrypt import TokenCrypt
+from threencr import TokenCrypt
 
 tc = TokenCrypt.from_argon2id("correct horse battery staple", b"0123456789abcdef")
 ```
@@ -88,7 +88,7 @@ tc.decrypt_if_3ncr(encrypted)  # -> plaintext
 through it regardless of whether it was encrypted.
 
 Decryption failures (bad tag, truncated input, malformed base64) raise
-`tokencrypt.TokenCryptError`.
+`threencr.TokenCryptError`.
 
 ## Cross-implementation interop
 
@@ -99,7 +99,7 @@ the [Go](https://github.com/3ncr/tokencrypt),
 AES key behind those vectors was originally derived via PBKDF2-SHA3-256 with
 `secret = "a"`, `salt = "b"`, `iterations = 1000`; the tests hardcode the
 resulting key and verify the AES-256-GCM envelope round-trips exactly. See
-`tests/test_tokencrypt.py`.
+`tests/test_threencr.py`.
 
 ## License
 
