@@ -3,7 +3,7 @@ requires = ["hatchling>=1.27.0"]
 build-backend = "hatchling.build"
 
 [project]
-name = "tokencrypt"
+name = "3ncr"
 version = "1.0.0"
 description = "Python implementation of the 3ncr.org v1 string encryption standard (AES-256-GCM)."
 readme = "README.md"
@@ -39,11 +39,11 @@ Specification = "https://3ncr.org/1/"
 dev = ["pytest>=8.4.2"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/tokencrypt"]
+packages = ["src/threencr"]
 
 [tool.hatch.build.targets.sdist]
 include = [
-    "src/tokencrypt",
+    "src/threencr",
     "tests",
     "README.md",
     "CHANGELOG.md",

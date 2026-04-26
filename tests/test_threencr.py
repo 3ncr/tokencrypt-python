@@ -6,7 +6,7 @@ import os
 
 import pytest
 
-from tokencrypt import HEADER_V1, TokenCrypt, TokenCryptError
+from threencr import HEADER_V1, TokenCrypt, TokenCryptError
 
 # Canonical v1 envelope test vectors — shared with Go, Node, PHP, and other
 # implementations. The 32-byte AES key was originally derived via the legacy

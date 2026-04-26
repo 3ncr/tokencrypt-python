@@ -3,7 +3,7 @@
 See https://3ncr.org/1/ for the specification.
 """
 
-from ._tokencrypt import (
+from ._threencr import (
     HEADER_V1,
     TokenCrypt,
     TokenCryptError,
